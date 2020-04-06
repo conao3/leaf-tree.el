@@ -35,13 +35,24 @@
   :link '(url-link :tag "Github" "https://github.com/conao3/leaf-tree.el"))
 
 
+;;; Advice
+
+(defvar leaf-tree-advice-alist nil
+  "Alist for leaf-tree advice.
+See `leaf-tree--setup' and `leaf-tree--teardown'.")
+
+
 ;;; Main
 
 (defun leaf-tree--setup ()
-  "Setup leaf-tree.")
+  "Setup leaf-tree."
+  (pcase-dolist (`(,sym . ,fn) leaf-tree-advice-alist)
+    (advice-add sym :around fn)))
 
 (defun leaf-tree--teardown ()
-  "Teardown leaf-tree.")
+  "Teardown leaf-tree."
+  (pcase-dolist (`(,sym . ,fn) leaf-tree-advice-alist)
+    (advice-remove sym fn)))
 
 (define-minor-mode leaf-tree-mode
   "Toggle `leaf' specific customize for `imenu-list'."
