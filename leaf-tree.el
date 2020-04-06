@@ -46,9 +46,20 @@
 ;;; Advice
 
 (defvar leaf-tree-advice-alist
-  '((imenu-list-update . leaf-tree--advice-imenu-list-update))
+  '((imenu-list-collect-entries . leaf-tree--advice-imenu-list-collect-entries)
+    (imenu-list-update . leaf-tree--advice-imenu-list-update))
   "Alist for leaf-tree advice.
 See `leaf-tree--setup' and `leaf-tree--teardown'.")
+
+(defun leaf-tree--advice-imenu-list-collect-entries (fn &rest args)
+  "Around advice for FN with ARGS.
+This code based `imenu-list' (2019/03/15 hash:4600873)
+See `imenu-list-collect-entries'."
+  (if (not leaf-tree-mode)
+      (apply fn args)
+    (imenu-list-rescan-imenu)
+    (setq imenu-list--imenu-entries imenu--index-alist)
+    (setq imenu-list--displayed-buffer (current-buffer))))
 
 (defun leaf-tree--advice-imenu-list-update (fn &rest args)
   "Around advice for FN with ARGS.
