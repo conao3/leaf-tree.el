@@ -39,9 +39,16 @@
 
 ;;; Advice
 
-(defvar leaf-tree-advice-alist nil
+(defvar leaf-tree-advice-alist
+  '((imenu-list-update . leaf-tree--advice-imenu-list-update))
   "Alist for leaf-tree advice.
 See `leaf-tree--setup' and `leaf-tree--teardown'.")
+
+(defun leaf-tree--advice-imenu-list-update (fn &rest args)
+  "Around advice for FN with ARGS.
+This code based `imenu-list' (2019/03/15 hash:4600873)
+See `imenu-list-update'."
+  (apply fn args))
 
 
 ;;; Main
