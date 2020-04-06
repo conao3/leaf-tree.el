@@ -89,13 +89,19 @@ See `imenu-list-update'."
 
 ;;; Main
 
+(defvar leaf-tree--imenu-list-minor-mode-value nil
+  "Stored `imenu-list-minor-mode' value before minor-mode enable.")
+
 (defun leaf-tree--setup ()
   "Setup leaf-tree."
+  (setq leaf-tree--imenu-list-minor-mode-value (if imenu-list-minor-mode 1 -1))
+  (imenu-list-minor-mode)
   (pcase-dolist (`(,sym . ,fn) leaf-tree-advice-alist)
     (advice-add sym :around fn)))
 
 (defun leaf-tree--teardown ()
   "Teardown leaf-tree."
+  (imenu-list-minor-mode leaf-tree--imenu-list-minor-mode-value)
   (pcase-dolist (`(,sym . ,fn) leaf-tree-advice-alist)
     (advice-remove sym fn)))
 
