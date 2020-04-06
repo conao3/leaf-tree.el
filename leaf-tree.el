@@ -29,6 +29,7 @@
 ;;; Code:
 
 (require 'seq)
+(require 'subr-x)
 (require 'imenu-list)
 
 (defgroup leaf-tree nil
@@ -73,18 +74,38 @@ The value is the same format as `imenu--index-alist'.
     N_TITLE := <string>      ; Node title
     MARKER  := <marker>      ; Marker at definition beggining")
 
+(defun leaf-tree--forward-sexp (&optional arg)
+  "Move forward across one balanced expression (sexp).
+With ARG, do it that many times.  see `forward-sexp'."
+  (let ((prev (point)))
+    (condition-case _
+        (progn
+          (apply #'forward-sexp `(,arg))
+          (not (equal prev (point))))
+      (scan-error nil))))
+
 (defun leaf-tree--imenu--list-rescan-imenu ()
   "Create `leaf' index alist for the current buffer.
 This function modify `leaf-tree--imenu--index-alist'."
-  (let (ret)
+  (let (acc)
+    (setq acc (lambda (&optional contents)
+                (while (and (re-search-forward leaf-tree-regexp nil t))
+                  (let* ((beg (match-beginning 0))
+                         ;; (op (match-string 1))
+                         (leaf--name (match-string-no-properties 2))
+                         (leaf--end (save-excursion
+                                      (goto-char beg) (and (leaf-tree--forward-sexp) (point)))))
+                    (if-let (child (save-restriction
+                                     ;; Narrow this leaf and skip to next leaf
+                                     (narrow-to-region beg leaf--end)
+                                     (funcall acc)))
+                        (push `(,leaf--name ,@child) contents)
+                      (push `(,leaf--name . ,(set-marker (make-marker) beg)) contents))
+                    (goto-char leaf--end)))
+                (nreverse contents)))
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward leaf-tree-regexp nil t)
-        (let ((beg (match-beginning 0))
-              ;; (op (match-string 1))
-              (leaf--name (match-string-no-properties 2)))
-          (push `(,leaf--name . ,(set-marker (make-marker) beg)) ret))))
-    (setq leaf-tree--imenu--index-alist `(("leaf-tree" ,@(nreverse ret))))))
+      (setq leaf-tree--imenu--index-alist `(("leaf-tree" ,@(funcall acc)))))))
 
 (defun leaf-tree--imenu--list-rescan-imenu--flat ()
   "Create `leaf' index alist for the current buffer.
