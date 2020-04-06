@@ -43,6 +43,11 @@
   :group 'leaf-tree
   :type 'boolean)
 
+(defcustom leaf-tree-click-group-to-hide nil
+  "Non-nil means hide child leaf-tree when click group line."
+  :group 'leaf-tree
+  :type 'boolean)
+
 (defcustom leaf-tree-regexp (eval-when-compile
                               (require 'regexp-opt)
                               (concat "^\\s-*("
@@ -169,9 +174,10 @@ See `imenu-list--insert-entry'."
                            'help-echo (format "Toggle: %s"
                                               (car entry))
                            'follow-link t
-                           'action #'imenu-list--action-goto-entry
-                           ;; #'imenu-list--action-toggle-hs
-                           )
+                           'action
+                           (if leaf-tree-click-group-to-hide
+                               #'imenu-list--action-goto-entry
+                             #'imenu-list--action-toggle-hs))
             (insert "\n"))
         (insert (imenu-list--depth-string depth))
         (insert-button (format "%s" (car entry))
