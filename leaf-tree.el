@@ -201,7 +201,7 @@ The result is a list just as long as SEQUENCE.
 SEQ may be a list, a vector, a 'bool-vector, or a string.
 Unlike `mapcar', it works well with dotlist (last cdr is non-nil list)."
   (when (cdr (last seq))
-    (setq seq (leaf-copy-list seq))
+    (setq seq (cl-copy-list seq))
     (setcdr (last seq) nil))
   (mapcar fn seq))
 
