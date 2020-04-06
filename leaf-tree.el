@@ -105,6 +105,7 @@ See `imenu-list-update'."
   (pcase-dolist (`(,sym . ,fn) leaf-tree-advice-alist)
     (advice-remove sym fn)))
 
+;;;###autoload
 (define-minor-mode leaf-tree-mode
   "Toggle `leaf' specific customize for `imenu-list'."
   :require 'leaf-tree
