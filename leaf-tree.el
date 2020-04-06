@@ -55,13 +55,9 @@ See `leaf-enable-imenu-support' to reference regexp."
 ;;; Function
 
 (defvar leaf-tree-mode)
-(defvar leaf-tree--imenu--index-alist nil)
-
-(defun leaf-tree--imenu--list-rescan-imenu ()
-  "Create `leaf' index alist for the current buffer.
-
-This function modify `leaf-tree--imenu--index-alist'
-instead of `imenu--index-alist' as same format.
+(defvar leaf-tree--imenu--index-alist nil
+  "Internal variable using `leaf-tree'.
+The value is the same format as `imenu--index-alist'.
 
 `imenu--index-alist' is alist like below format.
   imenu--index-alist := TREE
@@ -70,9 +66,11 @@ instead of `imenu--index-alist' as same format.
     NODE    := (N_TITLE . MARKER)
     G_TITLE := <string>      ; Group title
     N_TITLE := <string>      ; Node title
-    MARKER  := <marker>      ; Marker at definition beggining
+    MARKER  := <marker>      ; Marker at definition beggining")
 
-This function is minor change from `imenu--make-index-alist'."
+(defun leaf-tree--imenu--list-rescan-imenu ()
+  "Create `leaf' index alist for the current buffer.
+This function modify `leaf-tree--imenu--index-alist'."
   (let (ret)
     (save-excursion
       (goto-char (point-min))
