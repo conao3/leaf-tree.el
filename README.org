@@ -30,7 +30,10 @@ Interactive side-bar feature for init.el using [[https://github.com/conao3/leaf.
 
 * Install
 #+begin_src emacs-lisp
-  (leaf leaf-tree :ensure t)
+  (leaf leaf-tree
+    :ensure t
+    :config ((imenu-list-size . 30)
+             (imenu-list-position . 'left)))
 #+end_src
 
 * Usage
@@ -39,6 +42,8 @@ Interactive side-bar feature for init.el using [[https://github.com/conao3/leaf.
 * Customize
 - leaf-tree-flat :: Non-nil means make leaf-tree flat.
 - leaf-tree-click-group-to-hide :: Non-nil means hide child leaf-tree when click group line.
+
+As this package built on [[https://github.com/bmag/imenu-list][imenu-list]], please see also the package README.
 
 * Information
 ** Community
