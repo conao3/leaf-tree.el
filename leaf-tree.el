@@ -37,6 +37,20 @@
   :group 'tools
   :link '(url-link :tag "Github" "https://github.com/conao3/leaf-tree.el"))
 
+(defcustom leaf-tree-regexp (eval-when-compile
+                              (require 'regexp-opt)
+                              (concat "^\\s-*("
+                                      (regexp-opt '("leaf") 'symbols)
+                                      "\\s-+\\("
+                                      (or (bound-and-true-p lisp-mode-symbol-regexp)
+                                          "\\(?:\\sw\\|\\s_\\|\\\\.\\)+")
+                                      "\\)"))
+  "Regexp serch `leaf'.
+Regexp must have 2 group, for OP and LEAF--NAME.
+See `leaf-enable-imenu-support' to reference regexp."
+  :group 'leaf-tree
+  :type 'string)
+
 
 ;;; Function
 
@@ -59,7 +73,15 @@ instead of `imenu--index-alist' as same format.
     MARKER  := <marker>      ; Marker at definition beggining
 
 This function is minor change from `imenu--make-index-alist'."
-  (setq leaf-tree--imenu--index-alist nil))
+  (let (ret)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward leaf-tree-regexp nil t)
+        (let ((beg (match-beginning 0))
+              ;; (op (match-string 1))
+              (leaf--name (match-string 2)))
+          (push `(,leaf--name . ,(set-marker (make-marker) beg)) ret))))
+    (setq leaf-tree--imenu--index-alist `(("leaf-tree" ,@(nreverse ret))))))
 
 
 ;;; Advice
