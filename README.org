@@ -24,13 +24,21 @@
   - [[#special-thanks][Special Thanks]]
 
 * Description
-Interactive folding Elisp code using :tag leaf keyword.
+Interactive side-bar feature for init.el using [[https://github.com/conao3/leaf.el][leaf.el]].
+
+[[https://raw.githubusercontent.com/conao3/files/master/blob/leaf-tree.el/leaf-tree.gif]]
 
 * Install
+#+begin_src emacs-lisp
+  (leaf leaf-tree :ensure t)
+#+end_src
 
 * Usage
+~M-x leaf-tree-mode~
 
 * Customize
+- leaf-tree-flat :: Non-nil means make leaf-tree flat.
+- leaf-tree-click-group-to-hide :: Non-nil means hide child leaf-tree when click group line.
 
 * Information
 ** Community

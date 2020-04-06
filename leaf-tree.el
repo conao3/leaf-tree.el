@@ -23,7 +23,9 @@
 
 ;;; Commentary:
 
-;; Interactive folding Elisp code using :tag leaf keyword.
+;; Interactive side-bar feature for init.el using leaf.el.
+
+;; To use this package, just invoke `M-x leaf-tree-mode'.
 
 
 ;;; Code:
