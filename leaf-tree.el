@@ -228,9 +228,10 @@ See `insert-entries-internal'."
 (defun leaf-tree--setup ()
   "Setup leaf-tree."
   (setq leaf-tree--imenu-list-minor-mode-value (if imenu-list-minor-mode 1 -1))
-  (imenu-list-minor-mode)
   (pcase-dolist (`(,sym . ,fn) leaf-tree-advice-alist)
-    (advice-add sym :around fn)))
+    (advice-add sym :around fn))
+  (imenu-list-minor-mode)
+  (imenu-list-update nil 'force))
 
 (defun leaf-tree--teardown ()
   "Teardown leaf-tree."
