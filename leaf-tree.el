@@ -1,4 +1,4 @@
-;;; leaf-tree.el --- Interactive folding Elisp code using :tag leaf keyword  -*- lexical-binding: t; -*-
+;;; leaf-tree.el --- Interactive side-bar feature for init.el using leaf  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020  Naoya Yamashita
 
