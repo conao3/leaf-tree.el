@@ -29,6 +29,7 @@
 ;;; Code:
 
 (require 'seq)
+(require 'cl-lib)
 (require 'subr-x)
 (require 'imenu-list)
 
@@ -131,7 +132,8 @@ This function modify `leaf-tree--imenu--index-alist' in flat list."
 (defvar leaf-tree-advice-alist
   '((imenu-list-collect-entries . leaf-tree--advice-imenu-list-collect-entries)
     (imenu-list--find-entry     . leaf-tree--advice-imenu-list--find-entry)
-    (imenu-list--insert-entry   . leaf-tree--advice-imenu-list--insert-entry))
+    (imenu-list--insert-entry   . leaf-tree--advice-imenu-list--insert-entry)
+    (imenu-list--insert-entries-internal . leaf-tree--advice-imenu-list--insert-entries-internal))
   "Alist for leaf-tree advice.
 See `leaf-tree--setup' and `leaf-tree--teardown'.")
 
@@ -187,6 +189,32 @@ See `imenu-list--insert-entry'."
                        'follow-link t
                        'action #'imenu-list--action-goto-entry)
         (insert "\n")))))
+
+(defun leaf-tree--safe-mapcar (fn seq)
+  "Apply FN to each element of SEQ, and make a list of the results.
+The result is a list just as long as SEQUENCE.
+SEQ may be a list, a vector, a 'bool-vector, or a string.
+Unlike `mapcar', it works well with dotlist (last cdr is non-nil list)."
+  (when (cdr (last seq))
+    (setq seq (leaf-copy-list seq))
+    (setcdr (last seq) nil))
+  (mapcar fn seq))
+
+(defun leaf-tree--advice-imenu-list--insert-entries-internal (fn &rest args)
+  "Around advice for FN with ARGS.
+This code based `imenu-list' (2019/03/15 hash:4600873)
+See `insert-entries-internal'."
+  (let ((buf (or imenu-list--displayed-buffer (current-buffer))))
+    (if (not (buffer-local-value 'leaf-tree-mode buf))
+        (apply fn args)
+      (seq-let (index-alist depth) args
+        (leaf-tree--safe-mapcar
+         (lambda (entry)
+           (setq imenu-list--line-entries (append imenu-list--line-entries (list entry)))
+           (imenu-list--insert-entry entry depth)
+           (when (imenu--subalist-p entry)
+             (imenu-list--insert-entries-internal (cdr entry) (1+ depth))))
+         index-alist)))))
 
 
 ;;; Main
