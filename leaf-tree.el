@@ -34,7 +34,23 @@
   :group 'tools
   :link '(url-link :tag "Github" "https://github.com/conao3/leaf-tree.el"))
 
+
+;;; Main
 
+(defun leaf-tree--setup ()
+  "Setup leaf-tree.")
+
+(defun leaf-tree--teardown ()
+  "Teardown leaf-tree.")
+
+(define-minor-mode leaf-tree-mode
+  "Toggle `leaf' specific customize for `imenu-list'."
+  :require 'leaf-tree
+  :group 'leaf-tree
+  :lighter " leaf-tree"
+  (if leaf-tree-mode
+      (leaf-tree--setup)
+    (leaf-tree--teardown)))
 
 (provide 'leaf-tree)
 
