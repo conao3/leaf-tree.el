@@ -41,6 +41,25 @@
 ;;; Function
 
 (defvar leaf-tree-mode)
+(defvar leaf-tree--imenu--index-alist nil)
+
+(defun leaf-tree--imenu--list-rescan-imenu ()
+  "Create `leaf' index alist for the current buffer.
+
+This function modify `leaf-tree--imenu--index-alist'
+instead of `imenu--index-alist' as same format.
+
+`imenu--index-alist' is alist like below format.
+  imenu--index-alist := TREE
+    TREE    := nil | (<GROUP | NODE>*)
+    GROUP   := (<GROUP | (G_TITLE NODE+)>*)
+    NODE    := (N_TITLE . MARKER)
+    G_TITLE := <string>      ; Group title
+    N_TITLE := <string>      ; Node title
+    MARKER  := <marker>      ; Marker at definition beggining
+
+This function is minor change from `imenu--make-index-alist'."
+  (setq leaf-tree--imenu--index-alist nil))
 
 
 ;;; Advice
@@ -56,8 +75,8 @@ This code based `imenu-list' (2019/03/15 hash:4600873)
 See `imenu-list-collect-entries'."
   (if (not leaf-tree-mode)
       (apply fn args)
-    (imenu-list-rescan-imenu)
-    (setq imenu-list--imenu-entries imenu--index-alist)
+    (leaf-tree--imenu--list-rescan-imenu) ; renew `leaf-tree--imenu--index-alist'
+    (setq imenu-list--imenu-entries leaf-tree--imenu--index-alist)
     (setq imenu-list--displayed-buffer (current-buffer))))
 
 
