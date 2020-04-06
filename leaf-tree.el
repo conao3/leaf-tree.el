@@ -37,6 +37,11 @@
   :group 'tools
   :link '(url-link :tag "Github" "https://github.com/conao3/leaf-tree.el"))
 
+(defcustom leaf-tree-flat nil
+  "Non-nil means make leaf-tree flat."
+  :group 'leaf-tree
+  :type 'boolean)
+
 (defcustom leaf-tree-regexp (eval-when-compile
                               (require 'regexp-opt)
                               (concat "^\\s-*("
@@ -81,6 +86,19 @@ This function modify `leaf-tree--imenu--index-alist'."
           (push `(,leaf--name . ,(set-marker (make-marker) beg)) ret))))
     (setq leaf-tree--imenu--index-alist `(("leaf-tree" ,@(nreverse ret))))))
 
+(defun leaf-tree--imenu--list-rescan-imenu--flat ()
+  "Create `leaf' index alist for the current buffer.
+This function modify `leaf-tree--imenu--index-alist' in flat list."
+  (let (ret)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward leaf-tree-regexp nil t)
+        (let ((beg (match-beginning 0))
+              ;; (op (match-string 1))
+              (leaf--name (match-string 2)))
+          (push `(,leaf--name . ,(set-marker (make-marker) beg)) ret))))
+    (setq leaf-tree--imenu--index-alist `(("leaf-tree (flat)" ,@(nreverse ret))))))
+
 
 ;;; Advice
 
@@ -95,7 +113,9 @@ This code based `imenu-list' (2019/03/15 hash:4600873)
 See `imenu-list-collect-entries'."
   (if (not leaf-tree-mode)
       (apply fn args)
-    (leaf-tree--imenu--list-rescan-imenu) ; renew `leaf-tree--imenu--index-alist'
+    (if leaf-tree-flat         ; renew `leaf-tree--imenu--index-alist'
+        (leaf-tree--imenu--list-rescan-imenu--flat)
+      (leaf-tree--imenu--list-rescan-imenu))
     (setq imenu-list--imenu-entries leaf-tree--imenu--index-alist)
     (setq imenu-list--displayed-buffer (current-buffer))))
 
