@@ -174,7 +174,9 @@ See `imenu-list--insert-entry'."
               (insert (imenu-list--depth-string depth))
               (insert-button (format "+ %s" (car entry))
                              'face (imenu-list--get-face depth t)
-                             'help-echo (format "Toggle: %s"
+                             'help-echo (format (if leaf-tree-click-group-to-hide
+                                                    "Toggle: %s"
+                                                  "Go to: %s")
                                                 (car entry))
                              'follow-link t
                              'action
