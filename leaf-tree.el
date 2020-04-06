@@ -82,7 +82,7 @@ This function modify `leaf-tree--imenu--index-alist'."
       (while (re-search-forward leaf-tree-regexp nil t)
         (let ((beg (match-beginning 0))
               ;; (op (match-string 1))
-              (leaf--name (match-string 2)))
+              (leaf--name (match-string-no-properties 2)))
           (push `(,leaf--name . ,(set-marker (make-marker) beg)) ret))))
     (setq leaf-tree--imenu--index-alist `(("leaf-tree" ,@(nreverse ret))))))
 
@@ -95,7 +95,7 @@ This function modify `leaf-tree--imenu--index-alist' in flat list."
       (while (re-search-forward leaf-tree-regexp nil t)
         (let ((beg (match-beginning 0))
               ;; (op (match-string 1))
-              (leaf--name (match-string 2)))
+              (leaf--name (match-string-no-properties 2)))
           (push `(,leaf--name . ,(set-marker (make-marker) beg)) ret))))
     (setq leaf-tree--imenu--index-alist `(("leaf-tree (flat)" ,@(nreverse ret))))))
 
