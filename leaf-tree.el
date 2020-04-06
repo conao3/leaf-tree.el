@@ -99,7 +99,7 @@ This function modify `leaf-tree--imenu--index-alist'."
                                      ;; Narrow this leaf and skip to next leaf
                                      (narrow-to-region beg leaf--end)
                                      (funcall acc)))
-                        (push `(,leaf--name ,@child) contents)
+                        (push `(,leaf--name ,@child . ,(set-marker (make-marker) beg)) contents)
                       (push `(,leaf--name . ,(set-marker (make-marker) beg)) contents))
                     (goto-char leaf--end)))
                 (nreverse contents)))
@@ -124,7 +124,9 @@ This function modify `leaf-tree--imenu--index-alist' in flat list."
 ;;; Advice
 
 (defvar leaf-tree-advice-alist
-  '((imenu-list-collect-entries . leaf-tree--advice-imenu-list-collect-entries))
+  '((imenu-list-collect-entries . leaf-tree--advice-imenu-list-collect-entries)
+    (imenu-list--find-entry     . leaf-tree--advice-imenu-list--find-entry)
+    (imenu-list--insert-entry   . leaf-tree--advice-imenu-list--insert-entry))
   "Alist for leaf-tree advice.
 See `leaf-tree--setup' and `leaf-tree--teardown'.")
 
@@ -139,6 +141,46 @@ See `imenu-list-collect-entries'."
       (leaf-tree--imenu--list-rescan-imenu))
     (setq imenu-list--imenu-entries leaf-tree--imenu--index-alist)
     (setq imenu-list--displayed-buffer (current-buffer))))
+
+(defun leaf-tree--advice-imenu-list--find-entry (fn &rest args)
+  "Around advice for FN with ARGS.
+This code based `imenu-list' (2019/03/15 hash:4600873)
+See `imenu-list--find-entry'."
+  (let ((buf (or imenu-list--displayed-buffer (current-buffer))))
+    (if (not (buffer-local-value 'leaf-tree-mode buf))
+        (apply fn args)
+      (let ((entry (nth (1- (line-number-at-pos)) imenu-list--line-entries)))
+        (if (not (listp (cdr entry)))
+            entry
+          `(,(car entry) . ,(cdr (last entry))))))))
+
+(defun leaf-tree--advice-imenu-list--insert-entry (fn &rest args)
+  "Around advice for FN with ARGS.
+This code based `imenu-list' (2019/03/15 hash:4600873)
+See `imenu-list--insert-entry'."
+  (if (not leaf-tree-mode)
+      (apply fn args)
+    (seq-let (entry depth) args
+      (if (imenu--subalist-p entry)
+          (progn
+            (insert (imenu-list--depth-string depth))
+            (insert-button (format "+ %s" (car entry))
+                           'face (imenu-list--get-face depth t)
+                           'help-echo (format "Toggle: %s"
+                                              (car entry))
+                           'follow-link t
+                           'action #'imenu-list--action-goto-entry
+                           ;; #'imenu-list--action-toggle-hs
+                           )
+            (insert "\n"))
+        (insert (imenu-list--depth-string depth))
+        (insert-button (format "%s" (car entry))
+                       'face (imenu-list--get-face depth nil)
+                       'help-echo (format "Go to: %s"
+                                          (car entry))
+                       'follow-link t
+                       'action #'imenu-list--action-goto-entry)
+        (insert "\n")))))
 
 
 ;;; Main
