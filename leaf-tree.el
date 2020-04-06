@@ -165,30 +165,31 @@ See `imenu-list--find-entry'."
   "Around advice for FN with ARGS.
 This code based `imenu-list' (2019/03/15 hash:4600873)
 See `imenu-list--insert-entry'."
-  (if (not leaf-tree-mode)
-      (apply fn args)
-    (seq-let (entry depth) args
-      (if (imenu--subalist-p entry)
-          (progn
-            (insert (imenu-list--depth-string depth))
-            (insert-button (format "+ %s" (car entry))
-                           'face (imenu-list--get-face depth t)
-                           'help-echo (format "Toggle: %s"
-                                              (car entry))
-                           'follow-link t
-                           'action
-                           (if leaf-tree-click-group-to-hide
-                               #'imenu-list--action-goto-entry
-                             #'imenu-list--action-toggle-hs))
-            (insert "\n"))
-        (insert (imenu-list--depth-string depth))
-        (insert-button (format "%s" (car entry))
-                       'face (imenu-list--get-face depth nil)
-                       'help-echo (format "Go to: %s"
-                                          (car entry))
-                       'follow-link t
-                       'action #'imenu-list--action-goto-entry)
-        (insert "\n")))))
+  (let ((buf (or imenu-list--displayed-buffer (current-buffer))))
+    (if (not (buffer-local-value 'leaf-tree-mode buf))
+        (apply fn args)
+      (seq-let (entry depth) args
+        (if (imenu--subalist-p entry)
+            (progn
+              (insert (imenu-list--depth-string depth))
+              (insert-button (format "+ %s" (car entry))
+                             'face (imenu-list--get-face depth t)
+                             'help-echo (format "Toggle: %s"
+                                                (car entry))
+                             'follow-link t
+                             'action
+                             (if leaf-tree-click-group-to-hide
+                                 #'imenu-list--action-toggle-hs
+                               #'imenu-list--action-goto-entry))
+              (insert "\n"))
+          (insert (imenu-list--depth-string depth))
+          (insert-button (format "%s" (car entry))
+                         'face (imenu-list--get-face depth nil)
+                         'help-echo (format "Go to: %s"
+                                            (car entry))
+                         'follow-link t
+                         'action #'imenu-list--action-goto-entry)
+          (insert "\n"))))))
 
 (defun leaf-tree--safe-mapcar (fn seq)
   "Apply FN to each element of SEQ, and make a list of the results.
