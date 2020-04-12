@@ -59,7 +59,7 @@
                                       (or (bound-and-true-p lisp-mode-symbol-regexp)
                                           "\\(?:\\sw\\|\\s_\\|\\\\.\\)+")
                                       "\\)"))
-  "Regexp serch `leaf'.
+  "Regexp search `leaf'.
 Regexp must have 2 group, for OP and LEAF--NAME.
 See `leaf-enable-imenu-support' to reference regexp."
   :group 'leaf-tree
@@ -80,7 +80,7 @@ The value is the same format as `imenu--index-alist'.
     NODE    := (N_TITLE . MARKER)
     G_TITLE := <string>      ; Group title
     N_TITLE := <string>      ; Node title
-    MARKER  := <marker>      ; Marker at definition beggining")
+    MARKER  := <marker>      ; Marker at definition beginning")
 
 (defun leaf-tree--forward-sexp (&optional arg)
   "Move forward across one balanced expression (sexp).
@@ -141,7 +141,7 @@ See `leaf-tree--setup' and `leaf-tree--teardown'.")
 
 (defun leaf-tree--advice-imenu-list-collect-entries (fn &rest args)
   "Around advice for FN with ARGS.
-This code based `imenu-list' (2019/03/15 hash:4600873)
+This code based on `imenu-list' (2019/03/15 hash:4600873)
 See `imenu-list-collect-entries'."
   (if (not leaf-tree-mode)
       (apply fn args)
@@ -153,7 +153,7 @@ See `imenu-list-collect-entries'."
 
 (defun leaf-tree--advice-imenu-list--find-entry (fn &rest args)
   "Around advice for FN with ARGS.
-This code based `imenu-list' (2019/03/15 hash:4600873)
+This code based on `imenu-list' (2019/03/15 hash:4600873)
 See `imenu-list--find-entry'."
   (let ((buf (or imenu-list--displayed-buffer (current-buffer))))
     (if (not (buffer-local-value 'leaf-tree-mode buf))
@@ -165,7 +165,7 @@ See `imenu-list--find-entry'."
 
 (defun leaf-tree--advice-imenu-list--insert-entry (fn &rest args)
   "Around advice for FN with ARGS.
-This code based `imenu-list' (2019/03/15 hash:4600873)
+This code based on `imenu-list' (2019/03/15 hash:4600873)
 See `imenu-list--insert-entry'."
   (let ((buf (or imenu-list--displayed-buffer (current-buffer))))
     (if (not (buffer-local-value 'leaf-tree-mode buf))
@@ -207,7 +207,7 @@ Unlike `mapcar', it works well with dotlist (last cdr is non-nil list)."
 
 (defun leaf-tree--advice-imenu-list--insert-entries-internal (fn &rest args)
   "Around advice for FN with ARGS.
-This code based `imenu-list' (2019/03/15 hash:4600873)
+This code based on `imenu-list' (2019/03/15 hash:4600873)
 See `insert-entries-internal'."
   (let ((buf (or imenu-list--displayed-buffer (current-buffer))))
     (if (not (buffer-local-value 'leaf-tree-mode buf))
@@ -243,7 +243,7 @@ See `insert-entries-internal'."
 
 ;;;###autoload
 (define-minor-mode leaf-tree-mode
-  "Toggle `leaf' specific customize for `imenu-list'."
+  "Toggle `leaf' specific customizations for `imenu-list'."
   :require 'leaf-tree
   :group 'leaf-tree
   :lighter " leaf-tree"
