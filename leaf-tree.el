@@ -3,7 +3,7 @@
 ;; Copyright (C) 2020  Naoya Yamashita
 
 ;; Author: Naoya Yamashita <conao3@gmail.com>
-;; Version: 1.0.0
+;; Version: 1.0.1
 ;; Keywords: convenience leaf
 ;; Package-Requires: ((emacs "25.1") (imenu-list "0.8"))
 ;; URL: https://github.com/conao3/leaf-tree.el
