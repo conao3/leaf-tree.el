@@ -233,7 +233,7 @@ See `insert-entries-internal'."
   (pcase-dolist (`(,sym . ,fn) leaf-tree-advice-alist)
     (advice-add sym :around fn))
   (imenu-list-minor-mode)
-  (imenu-list-update nil 'force))
+  (imenu-list-update 'force))
 
 (defun leaf-tree--teardown ()
   "Teardown leaf-tree."
