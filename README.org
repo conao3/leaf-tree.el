@@ -18,7 +18,7 @@ leaf-tree provides a tree-view sidebar that displays all your =leaf= declaration
 * Requirements
 
 - Emacs 25.1 or later
-- [[https://github.com/bmag/imenu-list][imenu-list]] 0.8 or later
+- [[https://github.com/bmag/imenu-list][imenu-list]] 0.9 or later
 
 * Installation
 
