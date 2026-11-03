@@ -24,13 +24,13 @@ jobs:
           - 'snapshot'
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
       - uses: jcs090218/setup-emacs@v3
         with:
           version: ${{ matrix.emacs_version }}
 
-      - uses: conao3/setup-cask@master
+      - uses: cask/setup-cask@master
 
       - name: Install dependencies
         run: cask install
