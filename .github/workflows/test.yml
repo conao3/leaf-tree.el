@@ -30,7 +30,7 @@ jobs:
         with:
           version: ${{ matrix.emacs_version }}
 
-      - uses: cask/setup-cask@master
+      - uses: cask/setup-cask@v1.1.0
 
       - name: Install dependencies
         run: cask install
